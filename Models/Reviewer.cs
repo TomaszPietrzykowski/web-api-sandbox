@@ -1,10 +1,9 @@
 ﻿namespace WebApiSandbox.Models
 {
-    public class Product
+    public class Reviewer
     {
         public int Id { get; set; }
         public string Name { get; set; }
-        public DateTime CreatedAt { get; set; }
-        public int PriceInCents { get; set; } 
+        public ICollection<Review> Reviews { get; set; }
     }
 }

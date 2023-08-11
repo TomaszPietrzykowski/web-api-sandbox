@@ -1,0 +1,14 @@
+﻿using AutoMapper;
+using WebApiSandbox.Dto;
+using WebApiSandbox.Models;
+
+namespace WebApiSandbox.Helper
+{
+    public class MappingProfiles : Profile
+    {
+        public MappingProfiles()
+        {
+            CreateMap<Product, ProductDto>();
+        }
+    }
+}

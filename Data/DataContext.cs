@@ -26,7 +26,6 @@ namespace WebApiSandbox.Data
             modelBuilder.Entity<ProductCategory>().HasOne(p => p.Product).WithMany(pc => pc.ProductCategories).HasForeignKey(c => c.CategoryId);
             modelBuilder.Entity<ProductCategory>().HasOne(p => p.Category).WithMany(pc => pc.ProductCategories).HasForeignKey(c => c.ProductId);
 
-
             modelBuilder.Entity<ProductProducer>().HasKey(pp => new { pp.ProductId, pp.ProducerId });
             modelBuilder.Entity<ProductProducer>().HasOne(p => p.Product).WithMany(pp => pp.ProductProducers).HasForeignKey(p => p.ProducerId);
             modelBuilder.Entity<ProductProducer>().HasOne(p => p.Producer).WithMany(pp => pp.ProductProducers).HasForeignKey(p => p.ProductId);

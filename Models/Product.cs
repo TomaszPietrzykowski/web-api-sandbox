@@ -7,6 +7,6 @@
         public DateTime CreatedAt { get; set; }
         public ICollection<Review> Reviews { get; set; } 
         public ICollection<ProductCategory> ProductCategories { get; set; }
-        public ICollection<ProductProducer> ProductProducer { get; set; }
+        public ICollection<ProductProducer> ProductProducers { get; set; }
     }
 }

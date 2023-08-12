@@ -13,6 +13,7 @@ namespace WebApiSandbox.Helper
             CreateMap<Country, CountryDto>();
             CreateMap<Producer, ProducerDto>();
             CreateMap<Review, ReviewDto>();
+            CreateMap<Reviewer, ReviewerDto>();
         }
     }
 }

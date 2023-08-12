@@ -47,7 +47,7 @@ namespace WebApiSandbox.Controllers
             return Ok(country);
         }
 
-        [HttpGet("/producers/{producerId}")]
+        [HttpGet("producer/{producerId}")]
         [ProducesResponseType(200, Type = typeof(Country))]
         [ProducesResponseType(400)]
         public IActionResult GetProducersCountry(int producerId)

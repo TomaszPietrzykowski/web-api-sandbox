@@ -33,7 +33,7 @@ namespace WebApiSandbox.Controllers
             return Ok(reviews);
         }
 
-        [HttpGet("/product/{productId}")]
+        [HttpGet("product/{productId}")]
         [ProducesResponseType(200, Type = typeof(IEnumerable<Review>))]
         [ProducesResponseType(400)]
         public IActionResult GetProductReviews(int productId)

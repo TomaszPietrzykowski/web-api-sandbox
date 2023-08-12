@@ -11,6 +11,8 @@ namespace WebApiSandbox.Helper
             CreateMap<Product, ProductDto>();
             CreateMap<Category, CategoryDto>();
             CreateMap<Country, CountryDto>();
+            CreateMap<Producer, ProducerDto>();
+            CreateMap<Review, ReviewDto>();
         }
     }
 }

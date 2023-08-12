@@ -37,10 +37,9 @@ namespace WebApiSandbox.Controllers
         [ProducesResponseType(400)]
         public IActionResult GetProduct(int productId)
         {
-            var products = _productRepository.GetProducts();
-
             if (!_productRepository.ProductExists(productId))
                 return NotFound();
+
             var product = _mapper.Map<ProductDto>(_productRepository.GetProduct(productId));
 
             if (!ModelState.IsValid)

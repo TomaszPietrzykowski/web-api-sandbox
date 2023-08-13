@@ -9,5 +9,7 @@ namespace WebApiSandbox.Interfaces
         IEnumerable<Country> GetCountries();
         IEnumerable<Producer> GetProducersByCountry(int countryId);
         bool CountryExists(int countryId);
+        bool CreateCountry(Country country);
+        bool Save();
     }
 }

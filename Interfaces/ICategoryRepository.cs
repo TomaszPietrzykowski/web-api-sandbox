@@ -8,5 +8,7 @@ namespace WebApiSandbox.Interfaces
         Category GetCategory(int categoryId);
         ICollection<Product> GetProductsByCategory(int categoryId);
         bool CategoryExist(int categoryId);
+        bool CreateCategory(Category category);
+        bool Save();
     }
 }

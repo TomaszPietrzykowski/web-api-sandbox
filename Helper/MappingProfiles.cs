@@ -11,7 +11,7 @@ namespace WebApiSandbox.Helper
             CreateMap<Product, ProductDto>();
             CreateMap<ProductDto, Product>();
 
-            // When there is no need for different
+            // If there is no need for different
             // mapping on write and read:
             // CreateMap<Product, ProductDto>().ReverseMap();
 

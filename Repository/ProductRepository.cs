@@ -13,6 +13,31 @@ namespace WebApiSandbox.Repository
             _context = context;
         }
 
+        public bool CreateProduct(int producerId, int categoryId, Product product)
+        {
+            var producer = _context.Producers.Where(p => p.Id == producerId).FirstOrDefault();
+            var category = _context.Categories.Where(c => c.Id == categoryId).FirstOrDefault();
+            var productProducer = new ProductProducer()
+            {
+                Producer = producer,
+                Product = product
+            };
+
+            _context.Add(productProducer);
+
+            var productCategory = new ProductCategory()
+            {
+                Category = category,
+                Product = product
+            };
+
+            _context.Add(productCategory);
+
+            _context.Add(product);
+
+            return Save();
+        }
+
         public Product GetProduct(int id)
         {
             return _context.Products.Where(p => p.Id == id).FirstOrDefault();
@@ -39,6 +64,12 @@ namespace WebApiSandbox.Repository
         public bool ProductExists(int productId)
         {
             return _context.Products.Any(p => p.Id == productId);
+        }
+
+        public bool Save()
+        {
+            var saved = _context.SaveChanges();
+            return saved > 0 ? true : false;
         }
     }
 }

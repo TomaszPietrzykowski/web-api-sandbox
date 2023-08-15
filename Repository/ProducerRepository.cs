@@ -1,4 +1,5 @@
-﻿using WebApiSandbox.Data;
+﻿using System.Diagnostics.Metrics;
+using WebApiSandbox.Data;
 using WebApiSandbox.Interfaces;
 using WebApiSandbox.Models;
 
@@ -35,6 +36,18 @@ namespace WebApiSandbox.Repository
         public bool ProducerExists(int producerId)
         {
             return _context.Producers.Any(p => p.Id == producerId);
+        }
+
+        public bool CreateProducer(Producer producer)
+        {
+            _context.Add(producer);
+            return Save();
+        }
+
+        public bool Save()
+        {
+            var saved = _context.SaveChanges();
+            return saved > 0 ? true : false;
         }
     }
 }

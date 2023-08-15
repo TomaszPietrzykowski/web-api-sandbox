@@ -9,5 +9,7 @@ namespace WebApiSandbox.Interfaces
         ICollection<Producer> GetProducersByProduct(int productId);
         ICollection<Product> GetProductsByProducer(int producerId);
         bool ProducerExists(int producerId);
+        bool CreateProducer(Producer producer);
+        bool Save();
     }
 }

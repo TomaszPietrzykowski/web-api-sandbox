@@ -12,6 +12,12 @@ namespace WebApiSandbox.Repository
             _context = context;
         }
 
+        public bool CreateReview(Review review)
+        {
+            _context.Add(review);
+            return Save();
+        }
+
         public ICollection<Review> GetAllReviews()
         {
             return _context.Reviews.OrderBy(r => r.Id).ToList();
@@ -31,6 +37,12 @@ namespace WebApiSandbox.Repository
         public bool ReviewExists(int reviewId)
         {
             return _context.Reviews.Any(r => r.Id == reviewId);
+        }
+
+        public bool Save()
+        {
+            var saved = _context.SaveChanges();
+            return saved > 0 ? true : false;
         }
     }
 }

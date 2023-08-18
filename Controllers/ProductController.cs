@@ -69,6 +69,8 @@ namespace WebApiSandbox.Controllers
         [HttpPost]
         [ProducesResponseType(201)]
         [ProducesResponseType(400)]
+        [ProducesResponseType(422)]
+        [ProducesResponseType(500)]
         public IActionResult CreateProduct([FromBody] ProductDto productCreate, [FromQuery] int categoryId, [FromQuery] int producerId)
         {
             if (productCreate == null)
@@ -96,7 +98,9 @@ namespace WebApiSandbox.Controllers
                 return StatusCode(500, ModelState);
             }
 
-            return Ok(productMap.Id);
+            var newProduct = _mapper.Map<ProductDto>(productMap);
+
+            return Created(productMap.Id.ToString(), newProduct);
 
         }
     }

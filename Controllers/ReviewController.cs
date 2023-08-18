@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using WebApiSandbox.Dto;
 using WebApiSandbox.Interfaces;
 using WebApiSandbox.Models;
+using WebApiSandbox.Repository;
 
 namespace WebApiSandbox.Controllers
 {
@@ -12,11 +13,17 @@ namespace WebApiSandbox.Controllers
     {
         private readonly IReviewRepository _reviewRepository;
         private readonly IProductRepository _productRepository;
+        private readonly IReviewerRepository _reviewerRepository;
         private readonly IMapper _mapper;
 
-        public ReviewController(IReviewRepository reviewRepository, IProductRepository productRepository, IMapper mapper)
+        public ReviewController(
+            IReviewRepository reviewRepository,
+            IReviewerRepository reviewerRepository, 
+            IProductRepository productRepository, 
+            IMapper mapper)
         {
             _reviewRepository = reviewRepository;
+            _reviewerRepository = reviewerRepository;
             _productRepository = productRepository;
             _mapper = mapper;
         }
@@ -61,6 +68,44 @@ namespace WebApiSandbox.Controllers
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
             return Ok(review);
+        }
+
+        [HttpPost]
+        [ProducesResponseType(201)]
+        [ProducesResponseType(400)]
+        public IActionResult CreateReview([FromQuery] int productId, [FromQuery] int reviewerId, [FromBody] ReviewDto reviewCreate)
+        {
+            if (reviewCreate == null)
+                return BadRequest(ModelState);
+
+            //var review = _reviewRepository.GetAllReviews()
+            //    .Where(p => p.Title.Trim().ToUpper() == reviewCreate.Title.ToUpper())
+            //    .FirstOrDefault();
+            // rethink this condition in case of review
+            //if (review != null)
+            //{
+            //    ModelState.AddModelError("", "Review already exists");
+            //    return StatusCode(422, ModelState);
+            //}
+
+            if (!ModelState.IsValid)
+                return BadRequest(ModelState);
+
+            var reviewMap = _mapper.Map<Review>(reviewCreate);
+            reviewMap.Reviewer = _reviewerRepository.GetReviewer(reviewerId);
+            reviewMap.Product = _productRepository.GetProduct(productId);
+
+
+            if (!_reviewRepository.CreateReview(reviewMap))
+            {
+                ModelState.AddModelError("", "Something went wrong saving");
+                return StatusCode(500, ModelState);
+            }
+
+            var newReview = _mapper.Map<ReviewDto>(reviewMap);
+
+            return Created(reviewMap.Id.ToString(), newReview);
+
         }
     }
 }

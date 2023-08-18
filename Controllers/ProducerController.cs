@@ -114,7 +114,9 @@ namespace WebApiSandbox.Controllers
                 return StatusCode(500, ModelState);
             }
 
-            return Ok("Succesfully created");
+            var newProducer = _mapper.Map<ProducerDto>(producerMap);
+
+            return Created(producerMap.Id.ToString(), newProducer);
 
         }
     }

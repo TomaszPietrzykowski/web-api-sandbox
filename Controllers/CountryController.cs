@@ -92,7 +92,9 @@ namespace WebApiSandbox.Controllers
                 return StatusCode(500, ModelState);
             }
 
-            return Ok("Succesfully created");
+            var newCountry = _mapper.Map<CountryDto>(countryMap);
+
+            return Created(countryMap.Id.ToString(), newCountry);
 
         }
     }

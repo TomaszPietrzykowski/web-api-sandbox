@@ -95,7 +95,9 @@ namespace WebApiSandbox.Controllers
                 return StatusCode(500, ModelState);
             }
 
-            return Ok("Succesfully created");
+            var newCategory = _mapper.Map<CategoryDto>(categoryMap);
+
+            return Created(newCategory.Id.ToString(), newCategory);
 
         }
     }

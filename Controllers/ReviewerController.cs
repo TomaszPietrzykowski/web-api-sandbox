@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using WebApiSandbox.Dto;
 using WebApiSandbox.Interfaces;
 using WebApiSandbox.Models;
+using WebApiSandbox.Repository;
 
 namespace WebApiSandbox.Controllers
 {
@@ -83,6 +84,42 @@ namespace WebApiSandbox.Controllers
                 return BadRequest(ModelState);
 
             return Ok(reviewer);
+        }
+
+        [HttpPost]
+        [ProducesResponseType(201)]
+        [ProducesResponseType(400)]
+        [ProducesResponseType(422)]
+        [ProducesResponseType(500)]
+        public IActionResult CreateReviewer([FromBody] ReviewerDto reviewerCreate)
+        {
+            if (reviewerCreate == null)
+                return BadRequest(ModelState);
+
+            // check on email after adding email to model:
+            //var reviewer = _reviewerRepository.GetAllReviews()
+            //    .Where(p => p.Email.Trim().ToUpper() == reviewCreate.Email.ToUpper())
+            //    .FirstOrDefault();
+            //if (reviewer != null)
+            //{
+            //    ModelState.AddModelError("", "Reviewer already exists");
+            //    return StatusCode(422, ModelState);
+            //}
+
+            if (!ModelState.IsValid)
+                return BadRequest(ModelState);
+
+            var reviewerMap = _mapper.Map<Reviewer>(reviewerCreate);
+
+            if (!_reviewerRepository.CreateReviewer(reviewerMap))
+            {
+                ModelState.AddModelError("", "Something went wrong saving");
+                return StatusCode(500, ModelState);
+            }
+
+            var newReview = _mapper.Map<ReviewerDto>(reviewerMap);
+
+            return Created(reviewerMap.Id.ToString(), newReview);
         }
     }
 }

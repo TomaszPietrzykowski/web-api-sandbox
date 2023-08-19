@@ -3,7 +3,6 @@ using Microsoft.AspNetCore.Mvc;
 using WebApiSandbox.Dto;
 using WebApiSandbox.Interfaces;
 using WebApiSandbox.Models;
-using WebApiSandbox.Repository;
 
 namespace WebApiSandbox.Controllers
 {
@@ -86,8 +85,6 @@ namespace WebApiSandbox.Controllers
         [ProducesResponseType(400)]
         public IActionResult CreateProducer([FromBody] ProducerDto producerCreate, [FromQuery] int countryId)
         {
-            Console.ForegroundColor = ConsoleColor.Cyan;
-            Console.WriteLine("Controller entered");
             if (producerCreate == null)
                 return BadRequest(ModelState);
 
@@ -117,6 +114,37 @@ namespace WebApiSandbox.Controllers
             var newProducer = _mapper.Map<ProducerDto>(producerMap);
 
             return Created(producerMap.Id.ToString(), newProducer);
+        }
+
+        [HttpPut("{producerId}")]
+        [ProducesResponseType(200)]
+        [ProducesResponseType(400)]
+        [ProducesResponseType(404)]
+        public IActionResult UpdateProducer(int producerId, [FromBody] ProducerDto producerUpdate)
+        {
+            if (producerUpdate == null)
+                return BadRequest(ModelState);
+
+            if (producerId != producerUpdate.Id)
+                return BadRequest(ModelState);
+
+            if (!_producerRepository.ProducerExists(producerId))
+                return BadRequest(ModelState);
+
+            if (!ModelState.IsValid)
+                return BadRequest(ModelState);
+
+            var producerMap = _mapper.Map<Producer>(producerUpdate);
+
+            if (!_producerRepository.UpdateProducer(producerMap))
+            {
+                ModelState.AddModelError("", "Something went wrong saving");
+                return StatusCode(500, ModelState);
+            }
+
+            var newProducer = _mapper.Map<ProducerDto>(producerMap);
+
+            return Ok(newProducer);
 
         }
     }

@@ -38,7 +38,7 @@ namespace WebApiSandbox.Controllers
         [ProducesResponseType(400)]
         public IActionResult GetCategory(int categoryId)
         {
-            if (!_categoryRepository.CategoryExist(categoryId))
+            if (!_categoryRepository.CategoryExists(categoryId))
                 return NotFound();
 
             var category = _mapper.Map<CategoryDto>(_categoryRepository.GetCategory(categoryId));
@@ -55,7 +55,7 @@ namespace WebApiSandbox.Controllers
         [ProducesResponseType(400)]
         public IActionResult GetProductByCategoryId(int categoryId)
         {
-            if (!_categoryRepository.CategoryExist(categoryId))
+            if (!_categoryRepository.CategoryExists(categoryId))
                 return NotFound();
 
             var categories = _mapper.Map<List<ProductDto>>(_categoryRepository.GetProductsByCategory(categoryId));
@@ -98,6 +98,38 @@ namespace WebApiSandbox.Controllers
             var newCategory = _mapper.Map<CategoryDto>(categoryMap);
 
             return Created(newCategory.Id.ToString(), newCategory);
+
+        }
+
+        [HttpPut("{catergoryId}")]
+        [ProducesResponseType(200)]
+        [ProducesResponseType(400)]
+        [ProducesResponseType(404)]
+        public IActionResult UpdateCategory(int catergoryId, [FromBody] CategoryDto categoryUpdate)
+        {
+            if (categoryUpdate == null)
+                return BadRequest(ModelState);
+
+            if (catergoryId != categoryUpdate.Id)
+                return BadRequest(ModelState);
+
+            if (!_categoryRepository.CategoryExists(catergoryId))
+                return BadRequest(ModelState);
+
+            if (!ModelState.IsValid)
+                return BadRequest(ModelState);
+
+            var categoryMap = _mapper.Map<Category>(categoryUpdate);
+
+            if (!_categoryRepository.UpdateCategory(categoryMap))
+            {
+                ModelState.AddModelError("", "Something went wrong saving");
+                return StatusCode(500, ModelState);
+            }
+
+            var newCategory = _mapper.Map<CategoryDto>(categoryMap);
+
+            return Ok(newCategory);
 
         }
     }

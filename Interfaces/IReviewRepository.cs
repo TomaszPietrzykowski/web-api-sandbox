@@ -9,6 +9,7 @@ namespace WebApiSandbox.Interfaces
         ICollection<Review> GetAllReviews();
         bool ReviewExists(int reviewId);
         bool CreateReview(Review review);
+        bool UpdateReview(Review review);
         bool Save();
     }
 }

@@ -121,5 +121,37 @@ namespace WebApiSandbox.Controllers
 
             return Created(reviewerMap.Id.ToString(), newReview);
         }
+
+        [HttpPut("{reviewerId}")]
+        [ProducesResponseType(200)]
+        [ProducesResponseType(400)]
+        [ProducesResponseType(404)]
+        public IActionResult UpdateReviewer(int reviewerId, [FromBody] ReviewerDto reviewerUpdate)
+        {
+            if (reviewerUpdate == null)
+                return BadRequest(ModelState);
+
+            if (reviewerId != reviewerUpdate.Id)
+                return BadRequest(ModelState);
+
+            if (!_reviewerRepository.ReviewerExists(reviewerId))
+                return BadRequest(ModelState);
+
+            if (!ModelState.IsValid)
+                return BadRequest(ModelState);
+
+            var reviewerMap = _mapper.Map<Reviewer>(reviewerUpdate);
+
+            if (!_reviewerRepository.UpdateReviewer(reviewerMap))
+            {
+                ModelState.AddModelError("", "Something went wrong saving");
+                return StatusCode(500, ModelState);
+            }
+
+            var newReviewer = _mapper.Map<ReviewerDto>(reviewerMap);
+
+            return Ok(newReviewer);
+
+        }
     }
 }

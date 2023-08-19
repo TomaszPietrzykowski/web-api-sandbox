@@ -10,6 +10,7 @@ namespace WebApiSandbox.Interfaces
         decimal GetProductRating(int productId);
         bool ProductExists(int productId);
         bool CreateProduct(int producerId, int categoryId, Product product);
+        bool UpdateProduct(int producerId, int categoryId, Product product);
         bool Save();
     }
 }

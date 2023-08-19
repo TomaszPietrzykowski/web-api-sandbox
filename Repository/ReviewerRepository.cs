@@ -48,5 +48,11 @@ namespace WebApiSandbox.Repository
             var saved = _context.SaveChanges();
             return saved > 0;
         }
+
+        public bool UpdateReviewer(Reviewer reviewer)
+        {
+            _context.Update(reviewer);
+            return Save();
+        }
     }
 }

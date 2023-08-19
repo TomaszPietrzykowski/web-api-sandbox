@@ -66,6 +66,12 @@ namespace WebApiSandbox.Repository
             return _context.Products.Any(p => p.Id == productId);
         }
 
+        public bool UpdateProduct(int producerId, int categoryId, Product product)
+        {
+            _context.Update(product);
+            return Save();
+        }
+
         public bool Save()
         {
             var saved = _context.SaveChanges();

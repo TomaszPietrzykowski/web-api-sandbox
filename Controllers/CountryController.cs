@@ -97,5 +97,37 @@ namespace WebApiSandbox.Controllers
             return Created(countryMap.Id.ToString(), newCountry);
 
         }
+
+        [HttpPut("{countryId}")]
+        [ProducesResponseType(200)]
+        [ProducesResponseType(400)]
+        [ProducesResponseType(404)]
+        public IActionResult UpdateCountry(int countryId, [FromBody] CountryDto countryUpdate)
+        {
+            if (countryUpdate == null)
+                return BadRequest(ModelState);
+
+            if (countryId != countryUpdate.Id)
+                return BadRequest(ModelState);
+
+            if (!_countryRepository.CountryExists(countryId))
+                return BadRequest(ModelState);
+
+            if (!ModelState.IsValid)
+                return BadRequest(ModelState);
+
+            var countryMap = _mapper.Map<Country>(countryUpdate);
+
+            if (!_countryRepository.UpdateCountry(countryMap))
+            {
+                ModelState.AddModelError("", "Something went wrong saving");
+                return StatusCode(500, ModelState);
+            }
+
+            var newCountry = _mapper.Map<CountryDto>(countryMap);
+
+            return Ok(newCountry);
+
+        }
     }
 }

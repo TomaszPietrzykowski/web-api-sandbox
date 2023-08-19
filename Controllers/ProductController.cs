@@ -13,11 +13,19 @@ namespace WebApiSandbox.Controllers
     public class ProductController : Controller
     {
         private readonly IProductRepository _productRepository;
+        private readonly IProducerRepository _producerRepository;
+        private readonly ICategoryRepository _categoryRepository;
         private readonly IMapper _mapper;
 
-        public ProductController(IProductRepository productRepository, IMapper mapper)
+        public ProductController(
+            IProductRepository productRepository, 
+            IProducerRepository producerRepository, 
+            ICategoryRepository categoryRepository, 
+            IMapper mapper)
         {
             _productRepository = productRepository;
+            _producerRepository = producerRepository;
+            _categoryRepository = categoryRepository;
             _mapper = mapper;
         }
 
@@ -91,7 +99,6 @@ namespace WebApiSandbox.Controllers
 
             var productMap = _mapper.Map<Product>(productCreate);
 
-
             if (!_productRepository.CreateProduct(producerId, categoryId, productMap))
             {
                 ModelState.AddModelError("", "Something went wrong saving");
@@ -101,6 +108,38 @@ namespace WebApiSandbox.Controllers
             var newProduct = _mapper.Map<ProductDto>(productMap);
 
             return Created(productMap.Id.ToString(), newProduct);
+
+        }
+
+        [HttpPut("{productId}")]
+        [ProducesResponseType(200)]
+        [ProducesResponseType(400)]
+        [ProducesResponseType(404)]
+        public IActionResult UpdateProducer(int productId, [FromQuery] int producerId, [FromQuery] int categoryId, [FromBody] ProductDto productUpdate)
+        {
+            if (productUpdate == null)
+                return BadRequest(ModelState);
+
+            if (productId != productUpdate.Id)
+                return BadRequest(ModelState);
+
+            if (!_productRepository.ProductExists(productId))
+                return BadRequest(ModelState);
+
+            if (!ModelState.IsValid)
+                return BadRequest(ModelState);
+
+            var productMap = _mapper.Map<Product>(productUpdate);
+
+            if (!_productRepository.UpdateProduct(producerId, categoryId, productMap))
+            {
+                ModelState.AddModelError("", "Something went wrong saving");
+                return StatusCode(500, ModelState);
+            }
+
+            var updatedProduct = _mapper.Map<ProductDto>(productMap);
+
+            return Ok(updatedProduct);
 
         }
     }

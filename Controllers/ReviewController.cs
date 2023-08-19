@@ -78,16 +78,6 @@ namespace WebApiSandbox.Controllers
             if (reviewCreate == null)
                 return BadRequest(ModelState);
 
-            //var review = _reviewRepository.GetAllReviews()
-            //    .Where(p => p.Title.Trim().ToUpper() == reviewCreate.Title.ToUpper())
-            //    .FirstOrDefault();
-            // rethink this condition in case of review
-            //if (review != null)
-            //{
-            //    ModelState.AddModelError("", "Review already exists");
-            //    return StatusCode(422, ModelState);
-            //}
-
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
 
@@ -105,6 +95,37 @@ namespace WebApiSandbox.Controllers
             var newReview = _mapper.Map<ReviewDto>(reviewMap);
 
             return Created(reviewMap.Id.ToString(), newReview);
+        }
+
+        [HttpPut("{reviewId}")]
+        [ProducesResponseType(200)]
+        [ProducesResponseType(400)]
+        [ProducesResponseType(404)]
+        public IActionResult UpdateReview(int reviewId, [FromBody] ReviewDto reviewUpdate)
+        {
+            if (reviewUpdate == null)
+                return BadRequest(ModelState);
+
+            if (reviewId != reviewUpdate.Id)
+                return BadRequest(ModelState);
+
+            if (!_reviewRepository.ReviewExists(reviewId))
+                return BadRequest(ModelState);
+
+            if (!ModelState.IsValid)
+                return BadRequest(ModelState);
+
+            var reviewMap = _mapper.Map<Review>(reviewUpdate);
+
+            if (!_reviewRepository.UpdateReview(reviewMap))
+            {
+                ModelState.AddModelError("", "Something went wrong saving");
+                return StatusCode(500, ModelState);
+            }
+
+            var updatedReview = _mapper.Map<ReviewDto>(reviewMap);
+
+            return Ok(updatedReview);
 
         }
     }

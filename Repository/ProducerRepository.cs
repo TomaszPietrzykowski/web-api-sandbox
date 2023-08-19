@@ -44,6 +44,12 @@ namespace WebApiSandbox.Repository
             return Save();
         }
 
+        public bool UpdateProducer(Producer producer)
+        {
+            _context.Update(producer);
+            return Save();
+        }
+
         public bool Save()
         {
             var saved = _context.SaveChanges();

@@ -15,17 +15,20 @@ namespace WebApiSandbox.Controllers
         private readonly IProductRepository _productRepository;
         private readonly IProducerRepository _producerRepository;
         private readonly ICategoryRepository _categoryRepository;
+        private readonly IReviewRepository _reviewRepository;
         private readonly IMapper _mapper;
 
         public ProductController(
             IProductRepository productRepository, 
             IProducerRepository producerRepository, 
-            ICategoryRepository categoryRepository, 
+            ICategoryRepository categoryRepository,
+            IReviewRepository reviewRepository,
             IMapper mapper)
         {
             _productRepository = productRepository;
             _producerRepository = producerRepository;
             _categoryRepository = categoryRepository;
+            _reviewRepository = reviewRepository;
             _mapper = mapper;
         }
 
@@ -141,6 +144,37 @@ namespace WebApiSandbox.Controllers
 
             return Ok(updatedProduct);
 
+        }
+        [HttpDelete("{productId}")]
+        [ProducesResponseType(204)]
+        [ProducesResponseType(404)]
+        [ProducesResponseType(400)]
+        public IActionResult DeleteProduct(int productId)
+        {
+            if (!_productRepository.ProductExists(productId))
+            {
+                return NotFound();
+            }
+
+            var reviewsToBeDeletd = _reviewRepository.GetProductReviews(productId);
+            var productToBeDeletd = _productRepository.GetProduct(productId);
+
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
+            if (!_reviewRepository.DeleteReviews(reviewsToBeDeletd.ToList()))
+            {
+                ModelState.AddModelError("", "Something went wrong deleting reviews");
+            }
+
+            if (!_productRepository.DeleteProduct(productToBeDeletd))
+            {
+                ModelState.AddModelError("", "Something went wrong deleting product");
+            }
+
+            return NoContent();
         }
     }
 }

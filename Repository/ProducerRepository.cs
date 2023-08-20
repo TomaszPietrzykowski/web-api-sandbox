@@ -50,6 +50,12 @@ namespace WebApiSandbox.Repository
             return Save();
         }
 
+        public bool DeleteProducer(Producer producer)
+        {
+            _context.Remove(producer);
+            return Save();
+        }
+
         public bool Save()
         {
             var saved = _context.SaveChanges();

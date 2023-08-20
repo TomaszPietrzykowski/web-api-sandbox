@@ -147,5 +147,42 @@ namespace WebApiSandbox.Controllers
             return Ok(newProducer);
 
         }
+
+        [HttpDelete("{producerId}")]
+        [ProducesResponseType(204)]
+        [ProducesResponseType(404)]
+        [ProducesResponseType(400)]
+        public IActionResult DeleteProducer(int producerId)
+        {
+            if (!_producerRepository.ProducerExists(producerId))
+            {
+                return NotFound();
+            }
+
+            // placeholder check: handle potentially breaking relation before delete:
+            var dependantProducts = _producerRepository.GetProductsByProducer(producerId);
+
+            if (dependantProducts.Any())
+            {
+                //return BadRequest(ModelState);
+                //// perhaps return the list of dependant producers Ids
+                var ids = dependantProducts.Select(p => p.Id);
+                return UnprocessableEntity(ids);
+            }
+
+            var producerToBeDeletd = _producerRepository.GetProducerById(producerId);
+
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
+            if (!_producerRepository.DeleteProducer(producerToBeDeletd))
+            {
+                ModelState.AddModelError("", "Something went wrong deleting producer");
+            }
+
+            return NoContent();
+        }
     }
 }

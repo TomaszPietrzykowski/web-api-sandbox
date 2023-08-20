@@ -11,6 +11,7 @@ namespace WebApiSandbox.Interfaces
         bool ProducerExists(int producerId);
         bool CreateProducer(Producer producer);
         bool UpdateProducer(Producer producer);
+        bool DeleteProducer(Producer producer);
         bool Save();
     }
 }

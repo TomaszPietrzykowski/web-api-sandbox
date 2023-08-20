@@ -13,7 +13,9 @@ namespace WebApiSandbox.Controllers
         private readonly ICategoryRepository _categoryRepository;
         private readonly IMapper _mapper;
 
-        public CategoryController(ICategoryRepository categoryRepository, IMapper mapper)
+        public CategoryController(
+            ICategoryRepository categoryRepository,
+            IMapper mapper)
         {
             _categoryRepository = categoryRepository;
             _mapper = mapper;
@@ -134,14 +136,26 @@ namespace WebApiSandbox.Controllers
 
         [HttpDelete("{categoryId}")]
         [ProducesResponseType(204)]
-        [ProducesResponseType(404)]
         [ProducesResponseType(400)]
+        [ProducesResponseType(404)]
+        [ProducesResponseType(422, Type = typeof(IEnumerable<int>))]
         public IActionResult DeleteCategory(int categoryId)
         {
             if (!_categoryRepository.CategoryExists(categoryId))
             {
                 return NotFound();  
             }
+
+            //// placeholder check: handle potentially breaking relation before delete:
+            //var dependantProducts = _categoryRepository.GetProductsByCategory(categoryId);
+
+            //if (dependantProducts.Any())
+            //{
+            //    //return BadRequest(ModelState);
+            //    // perhaps return the list of dependant products Ids
+            //    var ids = dependantProducts.Select(p => p.Id);
+            //    return UnprocessableEntity(ids);
+            //}
 
             var categoryToBeDeletd = _categoryRepository.GetCategory(categoryId);
 

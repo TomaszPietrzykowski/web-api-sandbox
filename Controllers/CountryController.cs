@@ -129,5 +129,42 @@ namespace WebApiSandbox.Controllers
             return Ok(newCountry);
 
         }
+
+        [HttpDelete("{countryId}")]
+        [ProducesResponseType(204)]
+        [ProducesResponseType(404)]
+        [ProducesResponseType(400)]
+        public IActionResult DeleteCountry(int countryId)
+        {
+            if (!_countryRepository.CountryExists(countryId))
+            {
+                return NotFound();
+            }
+
+            // placeholder check: handle potentially breaking relation before delete:
+            var dependantProducers = _countryRepository.GetProducersByCountry(countryId);
+
+            if (dependantProducers.Any())
+            {
+                //return BadRequest(ModelState);
+                //// perhaps return the list of dependant producers Ids
+                var ids = dependantProducers.Select(p => p.Id);
+                return UnprocessableEntity(ids);
+            }
+
+            var countryToBeDeletd = _countryRepository.GetCountryById(countryId);
+
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
+            if (!_countryRepository.DeleteCountry(countryToBeDeletd))
+            {
+                ModelState.AddModelError("", "Something went wrong deleting country");
+            }
+
+            return NoContent();
+        }
     }
 }

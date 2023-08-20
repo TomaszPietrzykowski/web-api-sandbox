@@ -18,6 +18,12 @@ namespace WebApiSandbox.Repository
             return Save();
         }
 
+        public bool DeleteReviewer(Reviewer reviewer)
+        {
+            _context.Remove(reviewer);
+            return Save();
+        }
+
         public Reviewer GetReviewer(int reviewerId)
         {
             return _context.Reviewers.Where(r => r.Id == reviewerId).FirstOrDefault();

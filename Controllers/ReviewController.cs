@@ -126,7 +126,32 @@ namespace WebApiSandbox.Controllers
             var updatedReview = _mapper.Map<ReviewDto>(reviewMap);
 
             return Ok(updatedReview);
+        }
 
+        [HttpDelete("{reviewId}")]
+        [ProducesResponseType(204)]
+        [ProducesResponseType(404)]
+        [ProducesResponseType(400)]
+        public IActionResult DeleteReview(int reviewId)
+        {
+            if (!_reviewRepository.ReviewExists(reviewId))
+            {
+                return NotFound();
+            }
+
+            var reviewToBeDeleted = _reviewRepository.GetReview(reviewId);
+
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
+            if (!_reviewRepository.DeleteReview(reviewToBeDeleted))
+            {
+                ModelState.AddModelError("", "Something went wrong deleting review");
+            }
+
+            return NoContent();
         }
     }
 }
